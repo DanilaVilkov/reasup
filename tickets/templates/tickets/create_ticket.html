@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Создание заявки" %}
+{% endblock %}
+
+{% block extra_head %}
+  <!-- Подключаем Inputmask для телефонной маски -->
+  <script src="https://cdn.jsdelivr.net/npm/inputmask/dist/inputmask.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+    <h1 class="text-2xl font-bold text-primary dark:text-secondary text-center mb-6">
+      {% trans "Создание заявки" %}
+    </h1>
+
+    {% if messages %}
+      <ul class="mb-4">
+        {% for message in messages %}
+          <li class="text-sm text-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+      <div class="space-y-4">
+
+        <!-- ФИО -->
+        <div>
+          <label for="{{ ticket_form.full_name.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.full_name.label }}{% if ticket_form.full_name.field.required %}<span class="text-red-500">*</span>{% endif %}
+          </label>
+          {{ ticket_form.full_name }}
+          {% for error in ticket_form.full_name.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="{{ ticket_form.email.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.email.label }}{% if ticket_form.email.field.required %}<span class="text-red-500">*</span>{% endif %}
+          </label>
+          {{ ticket_form.email }}
+          {% for error in ticket_form.email.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Телефон -->
+        <div>
+          <label for="{{ ticket_form.phone.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.phone.label }}{% if ticket_form.phone.field.required %}<span class="text-red-500">*</span>{% endif %}
+          </label>
+          {{ ticket_form.phone }}
+          {% for error in ticket_form.phone.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Внутренний телефон -->
+        <div>
+          <label for="{{ ticket_form.internal_phone.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.internal_phone.label }}{% if ticket_form.internal_phone.field.required %}<span class="text-red-500">*</span>{% endif %}
+          </label>
+          {{ ticket_form.internal_phone }}
+          {% for error in ticket_form.internal_phone.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Корпус и Кабинет (в строку) -->
+        <div class="flex space-x-4">
+          <div class="flex-1">
+            <label for="{{ ticket_form.building.id_for_label }}" class="block text-sm font-medium">
+              {{ ticket_form.building.label }}{% if ticket_form.building.field.required %}<span class="text-red-500">*</span>{% endif %}
+            </label>
+            {{ ticket_form.building }}
+            {% for error in ticket_form.building.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+            {% endfor %}
+          </div>
+          <div class="flex-1">
+            <label for="{{ ticket_form.office.id_for_label }}" class="block text-sm font-medium">
+              {{ ticket_form.office.label }}{% if ticket_form.office.field.required %}<span class="text-red-500">*</span>{% endif %}
+            </label>
+            {{ ticket_form.office }}
+            {% for error in ticket_form.office.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Описание ошибки -->
+        <div>
+          <label for="{{ ticket_form.error_description.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.error_description.label }}{% if ticket_form.error_description.field.required %}<span class="text-red-500">*</span>{% endif %}
+          </label>
+          {{ ticket_form.error_description }}
+          {% for error in ticket_form.error_description.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Имя компьютера (необязательно) -->
+        <div>
+          <label for="{{ ticket_form.computer_name.id_for_label }}" class="block text-sm font-medium">
+            {{ ticket_form.computer_name.label }}
+          </label>
+          {{ ticket_form.computer_name }}
+          {% for error in ticket_form.computer_name.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Загрузка фото (необязательно) -->
+        <div>
+          <label class="block text-sm font-medium mb-1">{% trans "Загрузите фото (до 10)" %}</label>
+          <!-- Стилированная кнопка выбора -->
+          <label id="uploadLabel" class="inline-block px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700">
+            Выбрать файлы
+            <input
+              type="file"
+              id="id_image"
+              name="image"
+              accept="image/*"
+              multiple
+              style="display: none;"
+            />
+          </label>
+          <!-- Сообщение об отброшенных файлах -->
+          <p id="image-warning" class="text-sm text-yellow-600 mt-2"></p>
+          <!-- Контейнер для превью выбранных изображений -->
+          <div id="image-preview-container" class="mt-4 flex flex-wrap gap-2"></div>
+        </div>
+
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-2 px-4 bg-primary text-white rounded hover:bg-secondary transition"
+      >
+        {% trans "Создать заявку" %}
+      </button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Телефонная маска
+      const phoneInput = document.querySelector('.phone-mask');
+      if (phoneInput) {
+        new Inputmask("+7 (999) 999-99-99").mask(phoneInput);
+      }
+
+      // DataTransfer для накопления файлов
+      const dt = new DataTransfer();
+      const input = document.getElementById('id_image');
+      const label = document.getElementById('uploadLabel');
+      const warningElem = document.getElementById('image-warning');
+      const preview = document.getElementById('image-preview-container');
+
+      function updateWarning() {
+        const over = dt.files.length > 10 ? dt.files.length - 10 : 0;
+        warningElem.textContent = over
+          ? `Отброшено ${over} файлов. Загружены первые 10.`
+          : '';
+      }
+
+      function updateLabel() {
+        label.textContent = dt.files.length
+          ? 'Выбрать ещё'
+          : 'Выбрать файлы';
+        label.appendChild(input);
+      }
+
+      function renderPreviews() {
+        preview.innerHTML = '';
+        Array.from(dt.files).forEach((file, idx) => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const div = document.createElement('div');
+            div.className = 'relative';
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'h-20 w-20 object-cover rounded';
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.innerHTML = '&times;';
+            btn.className = 'absolute top-0 right-0 bg-red-600 text-white rounded-full h-5 w-5';
+            btn.addEventListener('click', () => {
+              dt.items.remove(idx);
+              input.files = dt.files;
+              updateWarning();
+              renderPreviews();
+              updateLabel();
+            });
+
+            div.appendChild(img);
+            div.appendChild(btn);
+            preview.appendChild(div);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      input.addEventListener('change', function() {
+        for (const f of input.files) dt.items.add(f);
+        while (dt.files.length > 10) dt.items.remove(dt.files.length - 1);
+        input.files = dt.files;
+        updateWarning();
+        renderPreviews();
+        updateLabel();
+      });
+    });
+  </script>
+{% endblock %}
+

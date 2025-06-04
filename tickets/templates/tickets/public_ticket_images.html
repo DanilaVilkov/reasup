@@ -1,0 +1,25 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Фото заявки №{{ ticket.pk }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'tickets/css/ticket_display.css' %}">
+</head>
+<body>
+    <h1>Фото заявки №{{ ticket.pk }}</h1>
+    <div class="images-container" style="text-align:center;">
+        {% for image in images %}
+            <a href="{{ image.image.url }}" target="_blank">
+                <img src="{{ image.image.url }}" alt="Фото" style="max-width:600px; max-height:600px; margin: 10px;">
+            </a>
+        {% empty %}
+            <p>{% trans "Нет прикрепленных фото." %}</p>
+        {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'ticket_display' %}" class="btn-back">{% trans "Назад" %}</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% trans "Название приложения" %}{% endblock %}</title>
+
+  <!-- Tailwind CSS и конфиг -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1d2856',
+            secondary: '#66ccff'
+          },
+          fontFamily: {
+            sans: ['Inter','sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Глобальные стили -->
+  <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'css/statuses.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col
+             bg-gradient-to-br from-secondary to-primary
+             dark:from-gray-800 dark:to-gray-900
+             text-gray-900 dark:text-gray-100">
+
+  <!-- HEADER -->
+  <header class="w-full flex items-center justify-between max-w-md mx-auto p-4">
+    <img
+      src="{% static 'tickets/image/logoSVGblueWordnoColor.svg' %}"
+      alt="Логотип"
+      class="h-12 sm:h-16 md:h-20 object-contain filter dark:brightness-0 dark:invert"
+    >
+    <button id="theme-toggle" aria-label="{% trans 'Переключить тему' %}"
+            class="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+      <!-- Солнце для светлой темы -->
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg"
+           class="w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m8.66-10h-1.1M4.44 12H3.34m15.22-7.07l-.78.78M6.22 17.66l-.78.78
+                 m14.14 0l-.78-.78M6.22 6.22l-.78-.78M12 7a5 5 0 110 10 5 5 0 010-10z"/>
+      </svg>
+      <!-- Луна для тёмной темы -->
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg"
+           class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- MAIN: теперь flex-grow, чтобы футер всегда прижат к низу -->
+  <main class="{% block main_class %}flex-grow max-w-4xl mx-auto mb-8{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+    <footer class="max-w-4xl mx-auto text-center text-sm text-gray-900 dark:text-gray-400 py-4">
+      &copy; 2025 Федеральное государственное бюджетное учреждение
+      «Российский экономический университет имени Г. В. Плеханова».
+    </footer>
+
+
+  <!-- Скрипт переключения темы -->
+  <script src="{% static 'tickets/js/theme-toggle.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

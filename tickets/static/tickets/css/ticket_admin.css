@@ -1,0 +1,42 @@
+/* Скрываем все элементы управления (иконки) внутри ячеек поля "Кто выполнил заявку" */
+td.field-done_by .related-widget-wrapper-link {
+    display: none !important;
+}
+/* Центрируем содержимое ячейки поля "Кто выполнил заявку" */
+td.field-done_by {
+    text-align: center;
+}
+
+/* Или, если нужно центрировать именно сам виджет */
+td.field-done_by .related-widget-wrapper {
+    display: inline-block;
+    margin: 0 auto;
+}
+/* Центрируем заголовки таблицы (в changelist) */
+table#result_list thead th,
+table.results thead th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Добавляем вертикальные линии между ячейками (колонками) по всему списку */
+table#result_list th,
+table#result_list td,
+table.results th,
+table.results td {
+    border-right: 1px solid #333333}
+
+/* Убираем линию справа от последней колонки */
+table#result_list th:last-child,
+table#result_list td:last-child,
+table.results th:last-child,
+table.results td:last-child {
+    border-right: none;
+}
+
+/* Если нужно добавить границу между заголовками и данными, можно добавить нижнюю границу в заголовки */
+table#result_list thead th,
+table.results thead th {
+    border-bottom: 2px solid #ddd;
+}
+

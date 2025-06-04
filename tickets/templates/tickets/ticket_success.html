@@ -1,0 +1,22 @@
+{# tickets/templates/tickets/ticket_success.html #}
+
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Заявка создана успешно!" %}{% endblock %}
+
+{% block content %}
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm mx-auto text-center">
+    <h1 class="text-3xl font-bold text-primary dark:text-secondary mb-4">
+      {% blocktrans with num=ticket_number %}Заявка №{{ num }} успешно создана!{% endblocktrans %}
+    </h1>
+    <p class="mb-6">
+      {% trans "Ваша заявка принята и будет обработана в ближайшее время." %}
+    </p>
+    <a
+      href="{% url 'create_ticket' %}"
+      class="inline-block px-6 py-2 bg-primary text-white rounded hover:bg-secondary transition"
+    >
+      {% trans "Создать новую заявку" %}
+    </a>
+  </div>
+{% endblock %}

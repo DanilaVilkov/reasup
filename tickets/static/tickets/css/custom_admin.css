@@ -1,0 +1,52 @@
+
+/* Пример адаптивных стилей для страницы списка тикетов в админке */
+
+/* Общие стили для таблицы результатов */
+table.results {
+    width: 100%;
+}
+
+/* Для экранов до 768px (планшеты) */
+@media (max-width: 768px) {
+    table.results thead, table.results tbody, table.results tr, table.results th, table.results td {
+        display: block;
+        width: 100%;
+    }
+    table.results thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    table.results tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    table.results td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+    table.results td:before {
+        /* Можно задать ярлыки для каждого столбца, если нужно */
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+    .submit-row {
+        padding: 10px;
+    }
+}
+
+/* Для экранов до 480px (мобильные устройства) */
+@media (max-width: 480px) {
+    .submit-row input.default {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block content %}
+<h1>Фото для заявки: {{ ticket.full_name }}</h1>
+<div style="display: flex; flex-wrap: wrap;">
+  {% for image in images %}
+    <div style="margin: 10px;">
+      <a href="{{ image.image.url }}" target="_blank">
+         <img src="{{ image.image.url }}" style="max-width: 300px; max-height: 300px;"/>
+      </a>
+    </div>
+  {% empty %}
+    <p>Нет прикреплённых фото.</p>
+  {% endfor %}
+</div>
+{% endblock %}

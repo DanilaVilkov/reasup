@@ -1,0 +1,156 @@
+{% load i18n %}
+<div class="overflow-x-auto">
+  <table
+    class="ticket-list w-full table-auto border-collapse
+           text-xs sm:text-sm md:text-base"
+  >
+    <thead class="bg-gray-50 dark:bg-gray-800">
+      <tr>
+        <th style="width:5%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          #
+        </th>
+        <th style="width:10%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          <div class="leading-tight">
+            <span>{% trans "Дата" %}/</span><br>
+            <span>{% trans "Время" %}</span>
+          </div>
+        </th>
+        <th style="width:10%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          <div class="leading-tight">
+            <span>{% trans "Корпус" %}/</span><br>
+            <span>{% trans "Кабинет" %}</span>
+          </div>
+        </th>
+        <th style="width:25%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Суть задачи" %}
+        </th>
+        <th style="width:15%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Контакт" %}
+        </th>
+        <th style="width:10%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Имя ПК" %}
+        </th>
+        <th style="width:10%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Статус" %}
+        </th>
+        <th style="width:10%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Выполнил" %}
+        </th>
+        <th style="width:5%;"
+            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+          {% trans "Фото" %}
+        </th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      {% for ticket in tickets %}
+        <tr class="{% if ticket.status == 'new' %}bg-red-100 dark:bg-red-900
+                   {% elif ticket.status == 'in_progress' %}bg-yellow-100 dark:bg-yellow-900
+                   {% elif ticket.status == 'closed' %}bg-green-100 dark:bg-green-900
+                   {% elif ticket.status == 'denied' %}bg-blue-100 dark:bg-blue-900{% endif %}">
+          <!-- # -->
+          <td class="px-2 py-1 text-center text-gray-800 dark:text-gray-100">
+            {{ ticket.id }}
+          </td>
+          <!-- Дата / Время -->
+          <td class="px-2 py-1 text-center text-gray-600 dark:text-gray-300">
+            {{ ticket.created_at|date:"d.m.Y" }}<br>{{ ticket.created_at|date:"H:i" }}
+          </td>
+          <!-- Корпус / Кабинет -->
+          <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
+            {{ ticket.building }}<br>{{ ticket.office }}
+          </td>
+          <!-- Суть задачи -->
+          <td class="px-2 py-1 text-left text-gray-700 dark:text-gray-300
+                     whitespace-normal break-words max-w-xs">
+            {{ ticket.error_description }}
+          </td>
+          <!-- Контакт -->
+          <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
+            {% if ticket.internal_phone %}
+              <span>{{ ticket.internal_phone }}</span><br>
+            {% endif %}
+            <span>{{ ticket.phone }}</span><br>
+            <span>{{ ticket.name_line1 }}</span>
+            {% if ticket.name_line2 %}
+              <br><span>{{ ticket.name_line2 }}</span>
+            {% endif %}
+          </td>
+          <!-- Имя ПК -->
+          <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
+            {{ ticket.computer_name|default:"–" }}
+          </td>
+          <!-- Статус -->
+          <td class="px-2 py-1 text-center">
+            {% if ticket.status == 'new' %}
+              <span class="px-2 inline-flex text-xs font-semibold rounded-full
+                           bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-100">
+                {{ ticket.get_status_display }}
+              </span>
+            {% elif ticket.status == 'in_progress' %}
+              <span class="px-2 inline-flex text-xs font-semibold rounded-full
+                           bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100">
+                {{ ticket.get_status_display }}
+              </span>
+            {% elif ticket.status == 'closed' %}
+              <span class="px-2 inline-flex text-xs font-semibold rounded-full
+                           bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-100">
+                {{ ticket.get_status_display }}
+              </span>
+            {% else %}
+              <span class="px-2 inline-flex text-xs font-semibold rounded-full
+                           bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-100">
+                {{ ticket.get_status_display }}
+              </span>
+            {% endif %}
+          </td>
+          <!-- Выполнил -->
+          <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
+            {% if ticket.done_by %}
+              {% with user=ticket.done_by %}
+                {% if user.first_name %}
+                  {{ user.last_name }} {{ user.first_name|slice:":1" }}.
+                {% else %}
+                  {{ user.last_name }}
+                {% endif %}
+              {% endwith %}
+            {% else %}
+              –
+            {% endif %}
+          </td>
+          <!-- Фото -->
+          <td class="px-2 py-1 text-center">
+            {% if ticket.images.count %}
+              <a href="{% url 'public_ticket_images' ticket.id %}" class="inline-block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     class="text-secondary hover:text-secondary-dark"
+                     fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a5 5 0 00-5 5H5a3 3 0 00-3 3v8a3 3 0 003 3h14a3 3 0 003-3v-8
+                           a3 3 0 00-3-3h-2a5 5 0 00-5-5zm0 4a3 3 0 013 3h-6a3 3 0 013-3zm0 5
+                           a4 4 0 110 8 4 4 0 010-8z"/>
+                </svg>
+              </a>
+            {% else %}
+              <span class="text-gray-400 dark:text-gray-600">–</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="9"
+              class="px-2 py-4 text-center text-gray-500 dark:text-gray-400">
+            {% trans "Нет заявок" %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Список заявок" %}
+{% endblock %}
+
+{% block main_class %}
+  w-full mx-0 px-4 mb-8 flex-grow
+{% endblock %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold text-primary dark:text-secondary mb-4">
+    {% trans "Список заявок" %}
+  </h1>
+
+  <!-- Статистика и текущее время -->
+  <div class="flex flex-wrap items-center gap-4 mb-6">
+    <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100">
+      {% trans "Новая" %}: {{ stats.new }}
+    </span>
+    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+      {% trans "В работе" %}: {{ stats.in_progress }}
+    </span>
+    <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+      {% trans "Закрыта" %}: {{ stats.closed }}
+    </span>
+    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+      {% trans "Отклонена" %}: {{ stats.denied }}
+    </span>
+    <div
+      id="current-datetime"
+      class="w-full sm:w-auto font-mono text-2xl font-semibold text-gray-700 dark:text-gray-300 mt-2 sm:mt-0"
+    ></div>
+  </div>
+
+  <!-- === Обёртка таблицы: всегда на всю ширину main === -->
+  <div class="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded w-full">
+    {% include "tickets/ticket_list_partial.html" %}
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('current-datetime').textContent =
+      now.toLocaleDateString('ru-RU') + ' ' +
+      now.toLocaleTimeString('ru-RU');
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    updateTime();
+    setInterval(updateTime, 1000);
+    setInterval(() => location.reload(), 15000);
+  });
+</script>
+{% endblock %}

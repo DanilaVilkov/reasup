@@ -1,0 +1,93 @@
+/* ticket_display.css — адаптивная таблица заявок на всю ширину */
+
+/* Контейнер и общий сброс */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, sans-serif;
+  background: inherit;
+}
+
+/* Таблица */
+.ticket-list {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;            /* колонки равномерно делят ширину */
+  word-break: break-word;          /* перенос длинного текста */
+  font-size: 0.9rem;
+}
+
+/* Заголовки */
+.ticket-list th {
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+/* Тела ячеек */
+.ticket-list td {
+  padding: 0.5rem;
+  vertical-align: top;
+  color: #374151;
+}
+
+/* Горизонтальный скролл на очень узких экранах */
+@media (max-width: 640px) {
+  .ticket-list {
+    font-size: 0.65rem;            /* ещё меньше шрифт */
+  }
+  .ticket-list th,
+  .ticket-list td {
+    white-space: normal;           /* разбивать строки */
+    padding: 0.25rem;
+  }
+}
+
+/* Последняя строка чуть ниже */
+.ticket-list tbody tr:last-child td {
+  padding-bottom: 1rem;
+}
+
+
+/* ticket_display.css */
+
+.ticket-list {
+  width: 100%;
+  margin: 0;         /* Убираем любые внешние отступы */
+  border-spacing: 0; /* Для table-fixed */
+}
+
+/* На очень узких экранах оставляем горизонтальный скролл */
+@media (max-width: 640px) {
+  .ticket-list {
+    font-size: 0.65rem;   /* Мелкий шрифт */
+  }
+  .ticket-list th,
+  .ticket-list td {
+    white-space: normal;   /* Разрешаем перенос слов */
+  }
+}
+
+/* ticket_display.css */
+
+.ticket-list {
+  width: 100%;
+  margin: 0;         /* Убираем любые внешние отступы */
+  border-spacing: 0; /* Для table-fixed */
+}
+
+/* На очень узких экранах оставляем горизонтальный скролл */
+@media (max-width: 640px) {
+  .ticket-list {
+    font-size: 0.65rem;   /* Мелкий шрифт */
+  }
+  .ticket-list th,
+  .ticket-list td {
+    white-space: normal;   /* Разрешаем перенос слов */
+  }
+}
+

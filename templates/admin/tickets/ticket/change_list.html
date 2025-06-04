@@ -1,0 +1,29 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content_title %}
+    {{ block.super }}
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+{% endblock %}
+
+{% block result_list %}
+    {% if ticket_stats %}
+    <div class="ticket-stats" style="margin-bottom: 20px; text-align: center;">
+        <span style="margin-right: 20px; color: {{ ticket_stats.in_progress.color }};">
+            {{ ticket_stats.in_progress.label }}: {{ ticket_stats.in_progress.count }}
+        </span>
+        <span style="margin-right: 20px; color: {{ ticket_stats.closed.color }};">
+            {{ ticket_stats.closed.label }}: {{ ticket_stats.closed.count }}
+        </span>
+        <span style="margin-right: 20px; color: {{ ticket_stats.new.color }};">
+            {{ ticket_stats.new.label }}: {{ ticket_stats.new.count }}
+        </span>
+        <span style="color: {{ ticket_stats.denied.color }};">
+            {{ ticket_stats.denied.label }}: {{ ticket_stats.denied.count }}
+        </span>
+    </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
