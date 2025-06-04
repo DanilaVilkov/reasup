@@ -13,3 +13,6 @@ dist/
 # Python bytecode
 *.pyo
 
+
+# IDE settings
+.idea/
