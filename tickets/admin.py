@@ -5,8 +5,7 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.safestring import mark_safe
-from django.utils.html import escape
-from html import escape  # для экранирования пользовательских данных
+from html import escape as html_escape  # для экранирования пользовательских данных
 from django.forms.models import ModelChoiceField
 from django.contrib.auth import get_user_model
 
@@ -81,8 +80,8 @@ class TicketAdmin(admin.ModelAdmin):
             phones += f" / {obj.internal_phone}"
         return format_html(
             "<div>{}</div><div style='font-size:90%; color:#555;'>{}</div>",
-            escape(phones),
-            escape(obj.full_name)
+            html_escape(phones),
+            html_escape(obj.full_name)
         )
     contact_info.short_description = "Контакт"
 
