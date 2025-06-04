@@ -72,22 +72,3 @@ body {
   }
 }
 
-/* ticket_display.css */
-
-.ticket-list {
-  width: 100%;
-  margin: 0;         /* Убираем любые внешние отступы */
-  border-spacing: 0; /* Для table-fixed */
-}
-
-/* На очень узких экранах оставляем горизонтальный скролл */
-@media (max-width: 640px) {
-  .ticket-list {
-    font-size: 0.65rem;   /* Мелкий шрифт */
-  }
-  .ticket-list th,
-  .ticket-list td {
-    white-space: normal;   /* Разрешаем перенос слов */
-  }
-}
-
