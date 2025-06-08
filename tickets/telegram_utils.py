@@ -16,20 +16,22 @@ def send_new_ticket_notification(ticket, request=None):
     if not bot_token or not chat_id:
         return False, "Не задан TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID"
 
-    # Формируем текст сообщения
+    # Формируем текст сообщения, включая номер заявки и имя ПК (если есть)
     parts = [
-        "<b>Новая заявка</b>",
+        f"<b>Новая заявка №{ticket.id}</b>",
         f"<b>Дата:</b> {ticket.created_at.strftime('%d.%m.%Y %H:%M')}",
         f"<b>ФИО:</b> {escape(ticket.full_name)}",
         f"<b>Телефон:</b> {escape(ticket.phone)}",
     ]
-    if ticket.internal_phone:
+    if getattr(ticket, 'internal_phone', None):
         parts.append(f"<b>Внутренний:</b> {escape(ticket.internal_phone)}")
     parts += [
         f"<b>Корпус:</b> {escape(ticket.building)}",
         f"<b>Кабинет:</b> {escape(ticket.office)}",
         f"<b>Задача:</b> {escape(ticket.error_description)}",
     ]
+    if getattr(ticket, 'computer_name', None):
+        parts.append(f"<b>Имя ПК:</b> {escape(ticket.computer_name)}")
     if ticket.images.exists():
         url = request.build_absolute_uri(ticket.images.first().image.url) if request else ticket.images.first().image.url
         parts.append(f"<b>Фото:</b> {escape(url)}")

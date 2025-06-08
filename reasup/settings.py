@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -25,13 +24,11 @@ SECRET_KEY = 'django-insecure--y_*s9dme-(y2*fa3e8f@t7+%_%f83%yjda+dpshrq+b487*e1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 
 INSTALLED_APPS = [
-    # стандартные приложения Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tickets.apps.TicketsConfig',
-    # наше приложение
 ]
 
 
@@ -75,9 +71,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'reasup.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Подключение базы данных
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -88,8 +82,6 @@ DATABASES = {
         'PORT': '5432',       # Порт (по умолчанию для PostgreSQL)
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -108,7 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -133,32 +124,27 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Убедитесь, что эта директория существует
 ]
 
-
-
-# MEDIA настройки (если у вас есть медиафайлы, такие как изображения)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-TELEGRAM_BOT_TOKEN = '7612483510:AAGzVgcvy9gzLaLxjuv02-2-VE5s8pZtdCM'
-TELEGRAM_CHAT_ID = '442468143'
-TELEGRAM_NEW_TICKETS_CHAT_ID = '442468143'  # новый чат для уведомлений о новых заявках
-
-
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# MEDIA настройки (если у вас есть медиафайлы, такие как изображения)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Отправлять письма через SMTP-сервер организации или публичный сервис
+# Настройка телеграм-бота
+TELEGRAM_BOT_TOKEN = '7612483510:AAGzVgcvy9gzLaLxjuv02-2-VE5s8pZtdCM'
+TELEGRAM_CHAT_ID = '442468143'
+TELEGRAM_NEW_TICKETS_CHAT_ID = '442468143'  # новый чат для уведомлений о новых заявках
+
+# Отправлять письма через SMTP-сервер
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'            # адрес SMTP-сервера
 EMAIL_PORT = 465                          # порт (обычно 587 для TLS)
 EMAIL_HOST_USER = 'reasupinfo@yandex.ru'         # учётная запись
 EMAIL_HOST_PASSWORD = 'lpdeydrtorzhrbhe'   # пароль
-EMAIL_USE_TLS = False                      # включить TLS-шифрование
+EMAIL_USE_TLS = False                      # выключить TLS-шифрование
 EMAIL_USE_SSL = True                # включаем SSL
 
 # Адрес, от имени которого будут приходить письма

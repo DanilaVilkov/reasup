@@ -1,24 +1,39 @@
+{# Загрузка статических файлов и модуля интернационализации #}
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    {# Базовые мета-теги #}
     <meta charset="UTF-8">
+    {# Заголовок страницы с номером заявки #}
     <title>Фото заявки №{{ ticket.pk }}</title>
+    {# Мета-тег для корректного отображения на мобильных устройствах #}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# Подключение CSS стилей #}
     <link rel="stylesheet" href="{% static 'tickets/css/ticket_display.css' %}">
 </head>
 <body>
+    {# Основной заголовок страницы #}
     <h1>Фото заявки №{{ ticket.pk }}</h1>
+
+    {# Контейнер для отображения изображений #}
     <div class="images-container" style="text-align:center;">
+        {# Цикл для вывода всех прикрепленных изображений #}
         {% for image in images %}
+            {# Ссылка на полное изображение, открывающаяся в новой вкладке #}
             <a href="{{ image.image.url }}" target="_blank">
+                {# Само изображение с ограничением по размеру #}
                 <img src="{{ image.image.url }}" alt="Фото" style="max-width:600px; max-height:600px; margin: 10px;">
             </a>
         {% empty %}
+            {# Сообщение, если нет прикрепленных фото #}
             <p>{% trans "Нет прикрепленных фото." %}</p>
         {% endfor %}
     </div>
+
+    {# Кнопка "Назад" #}
     <div style="text-align: center; margin-top: 20px;">
+        {# Ссылка для возврата на страницу просмотра заявки #}
         <a href="{% url 'ticket_display' %}" class="btn-back">{% trans "Назад" %}</a>
     </div>
 </body>

@@ -2,38 +2,41 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <!-- Мета-теги -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Заголовок страницы с возможностью переопределения в дочерних шаблонах -->
   <title>{% block title %}{% trans "Название приложения" %}{% endblock %}</title>
 
-  <!-- Tailwind CSS и конфиг -->
+  <!-- Подключение Tailwind CSS через CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    // Конфигурация Tailwind
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: 'class', // Используем class-based dark mode
       theme: {
         extend: {
           colors: {
-            primary: '#1d2856',
-            secondary: '#66ccff'
+            primary: '#1d2856',   // Основной цвет (темно-синий)
+            secondary: '#66ccff' // Вторичный цвет (голубой)
           },
           fontFamily: {
-            sans: ['Inter','sans-serif']
+            sans: ['Inter','sans-serif'] // Основной шрифт
           }
         }
       }
     };
   </script>
 
-  <!-- Глобальные стили -->
-  <link rel="stylesheet" href="{% static 'css/reset.css' %}">
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
-  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
-  <link rel="stylesheet" href="{% static 'css/components.css' %}">
-  <link rel="stylesheet" href="{% static 'css/statuses.css' %}">
-
+  <!-- Блок для дополнительных head-элементов в дочерних шаблонах -->
   {% block extra_head %}{% endblock %}
 </head>
+
+<!-- Основные классы для body:
+     - Минимальная высота экрана и flex-колонка
+     - Градиентный фон (меняется в темной теме)
+     - Цвет текста (меняется в темной теме) -->
 <body class="min-h-screen flex flex-col
              bg-gradient-to-br from-secondary to-primary
              dark:from-gray-800 dark:to-gray-900
@@ -41,21 +44,25 @@
 
   <!-- HEADER -->
   <header class="w-full flex items-center justify-between max-w-md mx-auto p-4">
+    <!-- Логотип с адаптивной высотой и фильтрами для темной темы -->
     <img
       src="{% static 'tickets/image/logoSVGblueWordnoColor.svg' %}"
       alt="Логотип"
       class="h-12 sm:h-16 md:h-20 object-contain filter dark:brightness-0 dark:invert"
     >
+
+    <!-- Кнопка переключения темы -->
     <button id="theme-toggle" aria-label="{% trans 'Переключить тему' %}"
             class="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition">
-      <!-- Солнце для светлой темы -->
+      <!-- Иконка солнца (видна только в светлой теме) -->
       <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg"
            class="w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 3v1m0 16v1m8.66-10h-1.1M4.44 12H3.34m15.22-7.07l-.78.78M6.22 17.66l-.78.78
                  m14.14 0l-.78-.78M6.22 6.22l-.78-.78M12 7a5 5 0 110 10 5 5 0 010-10z"/>
       </svg>
-      <!-- Луна для тёмной темы -->
+
+      <!-- Иконка луны (видна только в темной теме) -->
       <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg"
            class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -64,20 +71,20 @@
     </button>
   </header>
 
-  <!-- MAIN: теперь flex-grow, чтобы футер всегда прижат к низу -->
+  <!-- MAIN CONTENT -->
+  <!-- flex-grow позволяет main занимать все доступное пространство, прижимая footer к низу -->
   <main class="{% block main_class %}flex-grow max-w-4xl mx-auto mb-8{% endblock %}">
-    {% block content %}{% endblock %}
+    {% block content %}{% endblock %}  <!-- Блок для основного содержимого страницы -->
   </main>
 
   <!-- FOOTER -->
-    <footer class="max-w-4xl mx-auto text-center text-sm text-gray-900 dark:text-gray-400 py-4">
-      &copy; 2025 Федеральное государственное бюджетное учреждение
-      «Российский экономический университет имени Г. В. Плеханова».
-    </footer>
+  <footer class="max-w-4xl mx-auto text-center text-sm text-gray-900 dark:text-gray-400 py-4">
+    &copy; 2025 Федеральное государственное бюджетное учреждение
+    «Российский экономический университет имени Г. В. Плеханова».
+  </footer>
 
-
-  <!-- Скрипт переключения темы -->
-  <script src="{% static 'tickets/js/theme-toggle.js' %}"></script>
-  {% block extra_scripts %}{% endblock %}
+  <!-- Скрипты -->
+  <script src="{% static 'tickets/js/theme-toggle.js' %}"></script>  <!-- Скрипт переключения темы -->
+  {% block extra_scripts %}{% endblock %}  <!-- Блок для дополнительных скриптов -->
 </body>
 </html>

@@ -16,11 +16,13 @@ from .telegram_utils import send_new_ticket_notification
 User = get_user_model()
 
 
+# Inline-админка для изображений в заявке
 class TicketImageInline(admin.TabularInline):
     model = TicketImage
-    extra = 0
-    readonly_fields = ('image_tag',)
+    extra = 0  # Не показывать дополнительные пустые формы
+    readonly_fields = ('image_tag',)  # Поле только для чтения с миниатюрой
 
+    # Отображение миниатюры изображения
     def image_tag(self, obj):
         if obj.image:
             return format_html(
@@ -33,27 +35,31 @@ class TicketImageInline(admin.TabularInline):
     image_tag.short_description = 'Фото'
 
 
+# Основная админка для заявок
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    change_list_template = "admin/tickets/ticket/change_list.html"
+    change_list_template = "admin/tickets/ticket/change_list.html"  # Кастомный шаблон списка
 
     exclude = ('created_by',)  # скрываем поле "Кто оформил заявку"
 
+    # Поля для отображения в списке
     list_display = (
         'ticket_number', 'created_at_formatted', 'location', 'task_summary', 'contact_info',
         'status', 'computer_name', 'done_by', 'has_images', 'send_to_telegram'
     )
-    list_editable = ('done_by', 'status')
-    list_filter = ('status', 'building', 'done_by')
-    search_fields = ('full_name', 'email', 'computer_name', 'phone', 'office')
-    ordering = ('-created_at',)
-    inlines = [TicketImageInline]
-    list_select_related = ('done_by',)
+    list_editable = ('done_by', 'status')  # Поля, доступные для редактирования прямо в списке
+    list_filter = ('status', 'building', 'done_by')  # Фильтры справа
+    search_fields = ('full_name', 'email', 'computer_name', 'phone', 'office')  # Поля для поиска
+    ordering = ('-created_at',)  # Сортировка по умолчанию
+    inlines = [TicketImageInline]  # Inline для изображений
+    list_select_related = ('done_by',)  # Оптимизация запросов
 
+    # Отображение номера заявки
     def ticket_number(self, obj):
         return obj.pk
     ticket_number.short_description = 'Номер'
 
+    # Форматированное отображение даты создания
     def created_at_formatted(self, obj):
         return format_html(
             "<div>{}</div><div style='font-size:90%; color:#555;'>{}</div>",
@@ -62,6 +68,7 @@ class TicketAdmin(admin.ModelAdmin):
         )
     created_at_formatted.short_description = "Дата создания"
 
+    # Отображение местоположения (здание + офис)
     def location(self, obj):
         return format_html(
             "<div>{}</div><div style='font-size:90%; color:#555;'>{}</div>",
@@ -70,11 +77,13 @@ class TicketAdmin(admin.ModelAdmin):
         )
     location.short_description = "Расположение"
 
+    # Краткое описание задачи (обрезанное если длинное)
     def task_summary(self, obj):
         text = obj.error_description or ""
         return text if len(text) < 50 else text[:47] + "..."
     task_summary.short_description = "Суть задачи"
 
+    # Контактная информация (телефоны + ФИО)
     def contact_info(self, obj):
         phones = obj.phone
         if obj.internal_phone:
@@ -86,6 +95,7 @@ class TicketAdmin(admin.ModelAdmin):
         )
     contact_info.short_description = "Контакт"
 
+    # Отображение исполнителя в формате "Фамилия И."
     def done_by(self, obj):
         if obj.done_by:
             last = obj.done_by.last_name or ''
@@ -96,6 +106,7 @@ class TicketAdmin(admin.ModelAdmin):
         return "Не указано"
     done_by.short_description = 'Исполнитель'
 
+    # Отображение иконки наличия изображений со ссылкой на их просмотр
     def has_images(self, obj):
         if obj.images.exists():
             url = reverse('admin:tickets_ticket_images', args=[obj.pk])
@@ -113,6 +124,7 @@ class TicketAdmin(admin.ModelAdmin):
         return format_html('<span style="color: red;">Нет</span>')
     has_images.short_description = 'Фото'
 
+    # Кнопка для отправки уведомления в Telegram
     def send_to_telegram(self, obj):
         url = reverse('admin:tickets_send_to_telegram', args=[obj.pk])
         svg_icon = mark_safe('''
@@ -131,6 +143,7 @@ class TicketAdmin(admin.ModelAdmin):
         return format_html('<a class="btn btn-telegram" href="{}">{}</a>', url, svg_icon)
     send_to_telegram.short_description = 'TG'
 
+    # Кастомное поле для выбора исполнителя (формат "Фамилия И.")
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'done_by':
             qs = User.objects.all()
@@ -144,11 +157,13 @@ class TicketAdmin(admin.ModelAdmin):
             return ExecutorChoiceField(queryset=qs, required=not db_field.blank)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # Автоматическое изменение статуса при назначении исполнителя
     def save_model(self, request, obj, form, change):
         if obj.done_by and obj.status == 'new':
             obj.status = 'in_progress'
         super().save_model(request, obj, form, change)
 
+    # Отправка уведомления в Telegram
     def send_to_telegram_view(self, request, ticket_id):
         ticket = get_object_or_404(Ticket, pk=ticket_id)
         success, error = send_new_ticket_notification(ticket, request)
@@ -158,6 +173,7 @@ class TicketAdmin(admin.ModelAdmin):
             messages.error(request, f"Ошибка отправки в Telegram: {error}")
         return redirect(request.META.get('HTTP_REFERER', 'admin:index'))
 
+    # Просмотр изображений заявки
     def ticket_images_view(self, request, ticket_id):
         ticket = get_object_or_404(Ticket, pk=ticket_id)
         images = ticket.images.all()
@@ -169,6 +185,7 @@ class TicketAdmin(admin.ModelAdmin):
         }
         return render(request, 'admin/tickets/ticket/ticket_images.html', context)
 
+    # Установка статуса через AJAX
     def set_status_view(self, request, ticket_id):
         from django.http import JsonResponse
         ticket = get_object_or_404(Ticket, pk=ticket_id)
@@ -179,6 +196,7 @@ class TicketAdmin(admin.ModelAdmin):
             return JsonResponse({'success': True})
         return JsonResponse({'success': False}, status=400)
 
+    # Установка исполнителя через AJAX
     def set_executor_view(self, request, ticket_id):
         from django.http import JsonResponse
         ticket = get_object_or_404(Ticket, pk=ticket_id)
@@ -193,6 +211,7 @@ class TicketAdmin(admin.ModelAdmin):
         except Exception:
             return JsonResponse({'success': False}, status=400)
 
+    # Добавление кастомных URL
     def get_urls(self):
         urls = super().get_urls()
         custom = [
@@ -203,9 +222,11 @@ class TicketAdmin(admin.ModelAdmin):
         ]
         return custom + urls
 
+    # Оптимизация запросов - подгрузка изображений
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('images')
 
+    # Отображение статистики по статусам в списке заявок
     def changelist_view(self, request, extra_context=None):
         qs = self.get_queryset(request)
         stats = {
@@ -218,6 +239,7 @@ class TicketAdmin(admin.ModelAdmin):
         extra_context['ticket_stats'] = stats
         return super().changelist_view(request, extra_context=extra_context)
 
+    # Подключение кастомных CSS и JS
     class Media:
         js = ('tickets/js/ticket_admin.js',)
         css = {'all': ('tickets/css/ticket_admin.css',)}

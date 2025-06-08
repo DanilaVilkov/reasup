@@ -1,56 +1,79 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{# Блок заголовка страницы #}
 {% block title %}
   {% trans "Список заявок" %}
 {% endblock %}
 
+{# Основной класс для блока content - растягивает содержимое на всю доступную высоту #}
 {% block main_class %}
   w-full mx-0 px-4 mb-8 flex-grow
 {% endblock %}
 
+{# Основное содержимое страницы #}
 {% block content %}
+  {# Заголовок страницы #}
   <h1 class="text-3xl font-bold text-primary dark:text-secondary mb-4">
     {% trans "Список заявок" %}
   </h1>
 
-  <!-- Статистика и текущее время -->
+  {# Блок статистики и текущего времени #}
   <div class="flex flex-wrap items-center gap-4 mb-6">
+    {# Бейдж для новых заявок #}
     <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100">
       {% trans "Новая" %}: {{ stats.new }}
     </span>
+
+    {# Бейдж для заявок в работе #}
     <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
       {% trans "В работе" %}: {{ stats.in_progress }}
     </span>
+
+    {# Бейдж для закрытых заявок #}
     <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
       {% trans "Закрыта" %}: {{ stats.closed }}
     </span>
+
+    {# Бейдж для отклоненных заявок #}
     <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
       {% trans "Отклонена" %}: {{ stats.denied }}
     </span>
+
+    {# Блок для отображения текущей даты и времени #}
     <div
       id="current-datetime"
       class="w-full sm:w-auto font-mono text-2xl font-semibold text-gray-700 dark:text-gray-300 mt-2 sm:mt-0"
     ></div>
   </div>
 
-  <!-- === Обёртка таблицы: всегда на всю ширину main === -->
+  {# Обертка таблицы с заявками #}
   <div class="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded w-full">
+    {# Подключаемый шаблон с содержимым таблицы #}
     {% include "tickets/ticket_list_partial.html" %}
   </div>
 {% endblock %}
 
+{# Дополнительные скрипты #}
 {% block extra_scripts %}
 <script>
+  // Функция для обновления времени на странице
   function updateTime() {
     const now = new Date();
     document.getElementById('current-datetime').textContent =
-      now.toLocaleDateString('ru-RU') + ' ' +
-      now.toLocaleTimeString('ru-RU');
+      now.toLocaleDateString('ru-RU') + ' ' +  // Текущая дата
+      now.toLocaleTimeString('ru-RU');         // Текущее время
   }
+
+  // После загрузки DOM:
   document.addEventListener('DOMContentLoaded', () => {
+    // Первоначальное обновление времени
     updateTime();
+
+    // Обновление времени каждую секунду
     setInterval(updateTime, 1000);
+
+    // Автоматическое обновление страницы каждые 15 секунд
     setInterval(() => location.reload(), 15000);
   });
 </script>
