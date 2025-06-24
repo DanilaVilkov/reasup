@@ -1,11 +1,15 @@
 # tickets/signals.py
-
+import logging
 from django.conf import settings
 from django.core.mail import EmailMessage
 from email.utils import make_msgid
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+
 from .models import Ticket
+
+logger = logging.getLogger(__name__)
+
 
 @receiver(pre_save, sender=Ticket)
 def ticket_presave(sender, instance, **kwargs):
@@ -17,13 +21,14 @@ def ticket_presave(sender, instance, **kwargs):
         try:
             old = sender.objects.get(pk=instance.pk)
             instance._old_done_by = old.done_by
-            instance._old_status  = old.status
+            instance._old_status = old.status
         except sender.DoesNotExist:
             instance._old_done_by = None
-            instance._old_status  = None
+            instance._old_status = None
     else:
         instance._old_done_by = None
-        instance._old_status  = None
+        instance._old_status = None
+
 
 @receiver(post_save, sender=Ticket)
 def ticket_postsave(sender, instance, created, **kwargs):
@@ -37,7 +42,7 @@ def ticket_postsave(sender, instance, created, **kwargs):
         return
 
     ticket_id = instance.pk
-    to_email= instance.email
+    to_email = instance.email
     from_email = settings.DEFAULT_FROM_EMAIL
     base_subject = f"Заявка №{ticket_id} успешно создана"
     base_headers = {}
@@ -71,9 +76,10 @@ def ticket_postsave(sender, instance, created, **kwargs):
     new_exec = instance.done_by
     if old_exec is None and new_exec is not None:
         exec_name = new_exec.get_full_name() or new_exec.username
-        subject = f"Re: {base_subject}"
+        subject = f"По заявке №{ticket_id} назначен исполнитель"
         message = (
-            f"По вашей заявке №{ticket_id} назначен исполнитель: {exec_name}.\n"
+            f"По вашей заявке №{ticket_id} назначен исполнитель: "
+            f"{exec_name}.\n"
             "Ожидайте выполнения."
         )
         email = EmailMessage(
