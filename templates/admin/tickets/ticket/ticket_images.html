@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 {% block content %}
-<h1>Фото для заявки: {{ ticket.full_name }}</h1>
+<h1>Фото для заявки: №{{ticket.id}}</h1>
 <div style="display: flex; flex-wrap: wrap;">
   {% for image in images %}
     <div style="margin: 10px;">

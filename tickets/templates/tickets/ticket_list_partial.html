@@ -1,79 +1,98 @@
+{# Загрузка модуля интернационализации #}
 {% load i18n %}
+
+{# Контейнер для таблицы с горизонтальной прокруткой при необходимости #}
 <div class="overflow-x-auto">
-  <table
-    class="ticket-list w-full table-auto border-collapse
-           text-xs sm:text-sm md:text-base"
-  >
+  {# Основная таблица с адаптивными размерами шрифта #}
+  <table class="ticket-list w-full table-auto border-collapse text-xs sm:text-sm md:text-base">
+
+    {# Заголовок таблицы #}
     <thead class="bg-gray-50 dark:bg-gray-800">
       <tr>
-        <th style="width:5%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+        {# Колонка № - 5% ширины #}
+        <th style="width:5%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           #
         </th>
-        <th style="width:10%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка даты/времени - 10% ширины #}
+        <th style="width:10%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           <div class="leading-tight">
             <span>{% trans "Дата" %}/</span><br>
             <span>{% trans "Время" %}</span>
           </div>
         </th>
-        <th style="width:10%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка корпуса/кабинета - 10% ширины #}
+        <th style="width:10%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           <div class="leading-tight">
             <span>{% trans "Корпус" %}/</span><br>
             <span>{% trans "Кабинет" %}</span>
           </div>
         </th>
-        <th style="width:25%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка описания задачи - 25% ширины #}
+        <th style="width:25%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Суть задачи" %}
         </th>
-        <th style="width:15%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка контактов - 15% ширины #}
+        <th style="width:15%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Контакт" %}
         </th>
-        <th style="width:10%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка имени ПК - 10% ширины #}
+        <th style="width:10%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Имя ПК" %}
         </th>
-        <th style="width:10%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка статуса - 10% ширины #}
+        <th style="width:10%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Статус" %}
         </th>
-        <th style="width:10%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка исполнителя - 10% ширины #}
+        <th style="width:10%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Выполнил" %}
         </th>
-        <th style="width:5%;"
-            class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
+
+        {# Колонка фото - 5% ширины #}
+        <th style="width:5%;" class="px-2 py-1 text-center font-medium text-gray-600 dark:text-gray-400 uppercase">
           {% trans "Фото" %}
         </th>
       </tr>
     </thead>
+
+    {# Тело таблицы с разделителями между строками #}
     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      {# Цикл по всем заявкам #}
       {% for ticket in tickets %}
+        {# Строка таблицы с цветом фона в зависимости от статуса #}
         <tr class="{% if ticket.status == 'new' %}bg-red-100 dark:bg-red-900
                    {% elif ticket.status == 'in_progress' %}bg-yellow-100 dark:bg-yellow-900
                    {% elif ticket.status == 'closed' %}bg-green-100 dark:bg-green-900
                    {% elif ticket.status == 'denied' %}bg-blue-100 dark:bg-blue-900{% endif %}">
-          <!-- # -->
+
+          {# Ячейка с номером заявки #}
           <td class="px-2 py-1 text-center text-gray-800 dark:text-gray-100">
             {{ ticket.id }}
           </td>
-          <!-- Дата / Время -->
+
+          {# Ячейка с датой и временем создания #}
           <td class="px-2 py-1 text-center text-gray-600 dark:text-gray-300">
             {{ ticket.created_at|date:"d.m.Y" }}<br>{{ ticket.created_at|date:"H:i" }}
           </td>
-          <!-- Корпус / Кабинет -->
+
+          {# Ячейка с корпусом и кабинетом #}
           <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
             {{ ticket.building }}<br>{{ ticket.office }}
           </td>
-          <!-- Суть задачи -->
-          <td class="px-2 py-1 text-left text-gray-700 dark:text-gray-300
-                     whitespace-normal break-words max-w-xs">
+
+          {# Ячейка с описанием проблемы #}
+          <td class="px-2 py-1 text-left text-gray-700 dark:text-gray-300 whitespace-normal break-words max-w-xs">
             {{ ticket.error_description }}
           </td>
-          <!-- Контакт -->
+
+          {# Ячейка с контактной информацией #}
           <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
             {% if ticket.internal_phone %}
               <span>{{ ticket.internal_phone }}</span><br>
@@ -84,11 +103,13 @@
               <br><span>{{ ticket.name_line2 }}</span>
             {% endif %}
           </td>
-          <!-- Имя ПК -->
+
+          {# Ячейка с именем компьютера (или прочерком, если не указано) #}
           <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
             {{ ticket.computer_name|default:"–" }}
           </td>
-          <!-- Статус -->
+
+          {# Ячейка статуса с цветным бейджем #}
           <td class="px-2 py-1 text-center">
             {% if ticket.status == 'new' %}
               <span class="px-2 inline-flex text-xs font-semibold rounded-full
@@ -112,7 +133,8 @@
               </span>
             {% endif %}
           </td>
-          <!-- Выполнил -->
+
+          {# Ячейка исполнителя (форматированное имя или прочерк) #}
           <td class="px-2 py-1 text-center text-gray-700 dark:text-gray-300">
             {% if ticket.done_by %}
               {% with user=ticket.done_by %}
@@ -126,7 +148,8 @@
               –
             {% endif %}
           </td>
-          <!-- Фото -->
+
+          {# Ячейка с иконкой фото (если есть) #}
           <td class="px-2 py-1 text-center">
             {% if ticket.images.count %}
               <a href="{% url 'public_ticket_images' ticket.id %}" class="inline-block">
@@ -144,9 +167,9 @@
           </td>
         </tr>
       {% empty %}
+        {# Строка при отсутствии заявок #}
         <tr>
-          <td colspan="9"
-              class="px-2 py-4 text-center text-gray-500 dark:text-gray-400">
+          <td colspan="9" class="px-2 py-4 text-center text-gray-500 dark:text-gray-400">
             {% trans "Нет заявок" %}
           </td>
         </tr>

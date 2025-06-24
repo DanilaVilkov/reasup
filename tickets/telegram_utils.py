@@ -3,11 +3,13 @@
 import requests
 from requests.exceptions import RequestException
 from django.conf import settings
+from django.utils import timezone
 from html import escape
 
-def send_new_ticket_notification(ticket, request=None):
+def send_new_ticket_notification(ticket, request=None, urgent=False):
     """
     Отправляет уведомление о заявке в Telegram.
+    При urgent=True добавляет в начало сообщения строку "!!! СРОЧНО !!!".
     При миграции чата (400 с migrate_to_chat_id) автоматически перепосылает.
     Возвращает (True, None) при успехе или (False, описание ошибки) при неудаче.
     """
@@ -16,23 +18,37 @@ def send_new_ticket_notification(ticket, request=None):
     if not bot_token or not chat_id:
         return False, "Не задан TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID"
 
-    # Формируем текст сообщения
-    parts = [
-        "<b>Новая заявка</b>",
-        f"<b>Дата:</b> {ticket.created_at.strftime('%d.%m.%Y %H:%M')}",
+    # Формируем текст сообщения, включая номер заявки и имя ПК (если есть)
+    parts = []
+    if urgent:
+        parts.append("<b>!!! СРОЧНО !!!</b>")
+
+    created = ticket.created_at
+    if timezone.is_aware(created):
+        created = timezone.localtime(created)
+
+    parts += [
+        f"<b>Новая заявка №{ticket.id}</b>",
+        f"<b>Дата:</b> {created.strftime('%d.%m.%Y %H:%M')}",
         f"<b>ФИО:</b> {escape(ticket.full_name)}",
         f"<b>Телефон:</b> {escape(ticket.phone)}",
     ]
-    if ticket.internal_phone:
+    if getattr(ticket, 'internal_phone', None):
         parts.append(f"<b>Внутренний:</b> {escape(ticket.internal_phone)}")
     parts += [
         f"<b>Корпус:</b> {escape(ticket.building)}",
         f"<b>Кабинет:</b> {escape(ticket.office)}",
         f"<b>Задача:</b> {escape(ticket.error_description)}",
     ]
+    if getattr(ticket, 'computer_name', None):
+        parts.append(f"<b>Имя ПК:</b> {escape(ticket.computer_name)}")
     if ticket.images.exists():
         url = request.build_absolute_uri(ticket.images.first().image.url) if request else ticket.images.first().image.url
         parts.append(f"<b>Фото:</b> {escape(url)}")
+
+    if urgent:
+        parts.append("<b>!!! СРОЧНО !!!</b>")
+
 
     text = "\n".join(parts)
     payload = {

@@ -6,16 +6,19 @@
 {% endblock %}
 
 {% block extra_head %}
-  <!-- Подключаем Inputmask для телефонной маски -->
+  <!-- Подключаем библиотеку Inputmask для масок ввода -->
   <script src="https://cdn.jsdelivr.net/npm/inputmask/dist/inputmask.min.js"></script>
 {% endblock %}
 
 {% block content %}
+  <!-- Основной контейнер формы -->
   <div class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+    <!-- Заголовок формы -->
     <h1 class="text-2xl font-bold text-primary dark:text-secondary text-center mb-6">
       {% trans "Создание заявки" %}
     </h1>
 
+    <!-- Блок для отображения системных сообщений -->
     {% if messages %}
       <ul class="mb-4">
         {% for message in messages %}
@@ -24,11 +27,12 @@
       </ul>
     {% endif %}
 
+    <!-- Форма создания заявки -->
     <form method="post" enctype="multipart/form-data" class="space-y-6">
       {% csrf_token %}
       <div class="space-y-4">
 
-        <!-- ФИО -->
+        <!-- Поле: ФИО -->
         <div>
           <label for="{{ ticket_form.full_name.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.full_name.label }}{% if ticket_form.full_name.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -39,7 +43,7 @@
           {% endfor %}
         </div>
 
-        <!-- Email -->
+        <!-- Поле: Email -->
         <div>
           <label for="{{ ticket_form.email.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.email.label }}{% if ticket_form.email.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -50,7 +54,7 @@
           {% endfor %}
         </div>
 
-        <!-- Телефон -->
+        <!-- Поле: Телефон -->
         <div>
           <label for="{{ ticket_form.phone.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.phone.label }}{% if ticket_form.phone.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -61,7 +65,7 @@
           {% endfor %}
         </div>
 
-        <!-- Внутренний телефон -->
+        <!-- Поле: Внутренний телефон -->
         <div>
           <label for="{{ ticket_form.internal_phone.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.internal_phone.label }}{% if ticket_form.internal_phone.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -72,8 +76,9 @@
           {% endfor %}
         </div>
 
-        <!-- Корпус и Кабинет (в строку) -->
+        <!-- Группа полей: Корпус и Кабинет (расположены в одной строке) -->
         <div class="flex space-x-4">
+          <!-- Поле: Корпус -->
           <div class="flex-1">
             <label for="{{ ticket_form.building.id_for_label }}" class="block text-sm font-medium">
               {{ ticket_form.building.label }}{% if ticket_form.building.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -83,6 +88,7 @@
               <p class="mt-1 text-sm text-red-600">{{ error }}</p>
             {% endfor %}
           </div>
+          <!-- Поле: Кабинет -->
           <div class="flex-1">
             <label for="{{ ticket_form.office.id_for_label }}" class="block text-sm font-medium">
               {{ ticket_form.office.label }}{% if ticket_form.office.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -94,7 +100,7 @@
           </div>
         </div>
 
-        <!-- Описание ошибки -->
+        <!-- Поле: Описание ошибки -->
         <div>
           <label for="{{ ticket_form.error_description.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.error_description.label }}{% if ticket_form.error_description.field.required %}<span class="text-red-500">*</span>{% endif %}
@@ -105,7 +111,7 @@
           {% endfor %}
         </div>
 
-        <!-- Имя компьютера (необязательно) -->
+        <!-- Поле: Имя компьютера (необязательное) -->
         <div>
           <label for="{{ ticket_form.computer_name.id_for_label }}" class="block text-sm font-medium">
             {{ ticket_form.computer_name.label }}
@@ -116,12 +122,13 @@
           {% endfor %}
         </div>
 
-        <!-- Загрузка фото (необязательно) -->
+        <!-- Блок для загрузки изображений -->
         <div>
           <label class="block text-sm font-medium mb-1">{% trans "Загрузите фото (до 10)" %}</label>
-          <!-- Стилированная кнопка выбора -->
+          <!-- Стилизованная кнопка для выбора файлов -->
           <label id="uploadLabel" class="inline-block px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700">
             Выбрать файлы
+            <!-- Скрытый input для загрузки файлов -->
             <input
               type="file"
               id="id_image"
@@ -131,7 +138,7 @@
               style="display: none;"
             />
           </label>
-          <!-- Сообщение об отброшенных файлах -->
+          <!-- Сообщение о количестве загруженных файлов -->
           <p id="image-warning" class="text-sm text-yellow-600 mt-2"></p>
           <!-- Контейнер для превью выбранных изображений -->
           <div id="image-preview-container" class="mt-4 flex flex-wrap gap-2"></div>
@@ -139,6 +146,7 @@
 
       </div>
 
+      <!-- Кнопка отправки формы -->
       <button
         type="submit"
         class="w-full py-2 px-4 bg-primary text-white rounded hover:bg-secondary transition"
@@ -151,20 +159,24 @@
 
 {% block extra_scripts %}
   <script>
+    // Ожидаем полной загрузки DOM
     document.addEventListener('DOMContentLoaded', function() {
-      // Телефонная маска
+      // Инициализация маски для телефонного номера
       const phoneInput = document.querySelector('.phone-mask');
       if (phoneInput) {
         new Inputmask("+7 (999) 999-99-99").mask(phoneInput);
       }
 
-      // DataTransfer для накопления файлов
-      const dt = new DataTransfer();
-      const input = document.getElementById('id_image');
-      const label = document.getElementById('uploadLabel');
-      const warningElem = document.getElementById('image-warning');
-      const preview = document.getElementById('image-preview-container');
+      // Логика для работы с загрузкой изображений
+      const dt = new DataTransfer(); // Объект для хранения выбранных файлов
+      const input = document.getElementById('id_image'); // Input для загрузки файлов
+      const label = document.getElementById('uploadLabel'); // Кнопка выбора файлов
+      const warningElem = document.getElementById('image-warning'); // Элемент для предупреждений
+      const preview = document.getElementById('image-preview-container'); // Контейнер для превью
 
+      /**
+       * Обновляет предупреждение о количестве файлов
+       */
       function updateWarning() {
         const over = dt.files.length > 10 ? dt.files.length - 10 : 0;
         warningElem.textContent = over
@@ -172,6 +184,9 @@
           : '';
       }
 
+      /**
+       * Обновляет текст кнопки выбора файлов
+       */
       function updateLabel() {
         label.textContent = dt.files.length
           ? 'Выбрать ещё'
@@ -179,41 +194,54 @@
         label.appendChild(input);
       }
 
+      /**
+       * Создает превью выбранных изображений
+       */
       function renderPreviews() {
-        preview.innerHTML = '';
+        preview.innerHTML = ''; // Очищаем контейнер
         Array.from(dt.files).forEach((file, idx) => {
           const reader = new FileReader();
           reader.onload = e => {
+            // Создаем контейнер для превью
             const div = document.createElement('div');
             div.className = 'relative';
 
+            // Создаем элемент изображения
             const img = document.createElement('img');
             img.src = e.target.result;
             img.className = 'h-20 w-20 object-cover rounded';
 
+            // Создаем кнопку удаления
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.innerHTML = '&times;';
             btn.className = 'absolute top-0 right-0 bg-red-600 text-white rounded-full h-5 w-5';
             btn.addEventListener('click', () => {
-              dt.items.remove(idx);
-              input.files = dt.files;
+              dt.items.remove(idx); // Удаляем файл из DataTransfer
+              input.files = dt.files; // Обновляем input
               updateWarning();
-              renderPreviews();
+              renderPreviews(); // Перерисовываем превью
               updateLabel();
             });
 
+            // Добавляем элементы в DOM
             div.appendChild(img);
             div.appendChild(btn);
             preview.appendChild(div);
           };
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(file); // Читаем файл как Data URL
         });
       }
 
+      // Обработчик изменения выбранных файлов
       input.addEventListener('change', function() {
+        // Добавляем новые файлы в DataTransfer
         for (const f of input.files) dt.items.add(f);
+
+        // Удаляем лишние файлы, если выбрано больше 10
         while (dt.files.length > 10) dt.items.remove(dt.files.length - 1);
+
+        // Обновляем input и UI
         input.files = dt.files;
         updateWarning();
         renderPreviews();
@@ -222,4 +250,3 @@
     });
   </script>
 {% endblock %}
-

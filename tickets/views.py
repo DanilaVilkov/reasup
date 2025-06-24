@@ -3,6 +3,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import TicketForm
+import threading
 from .models import Ticket, TicketImage
 from .telegram_utils import send_new_ticket_notification
 
@@ -28,7 +29,11 @@ def create_ticket(request):
             for image_file in image_files:
                 TicketImage.objects.create(ticket=ticket, image=image_file)
 
-            send_new_ticket_notification(ticket, request)
+            threading.Thread(
+                target=send_new_ticket_notification,
+                args=(ticket, request),
+                daemon=True,
+            ).start()
             # Теперь редиректим на URL с параметром ticket_id
             return redirect('ticket_success', ticket_id=ticket.pk)
     else:
